@@ -1,0 +1,43 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "sync"
+  recursive_type_depth = 5
+  output               = "./generated/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  name     String?
+}
+
+model Job {
+  id               Int      @id @default(autoincrement()) // Unique identifier for the job
+  title            String // Title of the job (e.g., Software Engineer, Marketing Manager)
+  location         String // Location of the job (e.g., Lagos, Nigeria)
+  employmentType   String // Employment type (e.g., Full Time, Part Time)
+  salaryRange      String // Salary range (e.g., N123 - N456)
+  description      String // Description of the job
+  responsibilities String // Responsibilities of the job
+  qualifications   String // Qualifications required for the job
+  publishedDate    DateTime @default(now()) // Date when the job was published
+  company          Company  @relation(name: "JobCompany", fields: [companyId], references: [id]) // Relationship with the Company model
+  companyId        Int // Foreign key reference to the company
+  
+}
+
+// Define the Company model
+model Company {
+  id              Int     @id @default(autoincrement()) // Unique identifier for the company
+  name            String // Name of the company
+  logo            String? // Path to the company logo image
+  companyDetail   String?
+  jobs Job[]   @relation("JobCompany") // Relationship with the Job model
+  
+}
